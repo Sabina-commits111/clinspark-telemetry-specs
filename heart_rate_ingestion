@@ -2,7 +2,7 @@ clinspark-telemetry-specs/
 └── features/
     └── telemetry/
         └── heart_rate_ingestion.feature
-@api @telemetry @idempotency @21CFR11 @REQ-CS-1042 @EMA-Annex11
+@api @telemetry @idempotency @21CFR11 @REQ-CS-1042 @EMA-Annex11 @audit
 Feature: Real-Time Heart Rate Telemetry Ingestion
 
   As a Clinical Trial Investigator
