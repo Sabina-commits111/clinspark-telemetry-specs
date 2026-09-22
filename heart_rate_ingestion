@@ -1,0 +1,27 @@
+clinspark-telemetry-specs/
+└── features/
+    └── telemetry/
+        └── heart_rate_ingestion.feature
+@api @telemetry @idempotency @21CFR11 @REQ-CS-1042
+Feature: Real-Time Heart Rate Telemetry Ingestion
+
+  As a Clinical Trial Investigator
+  I want wearable heart rate data normalized to UTC and deduplicated
+  So that patient safety logs remain chronologically accurate and Part 11 compliant
+
+  Background:
+    Given the ClinSpark telemetry ingestion API is active
+    And site "US-NY-101" is registered with timezone "America/New_York"
+
+  Scenario Outline: Ingest duplicate telemetry payloads idempotently
+    Given a wearable sensor transmits a heart rate reading with idempotency key "<idempotency_key>"
+    And the raw payload contains local timestamp "<local_time>" with offset "<offset>"
+    When the telemetry API receives the POST request payload
+    Then the system should persist the reading in UTC as "<expected_utc>"
+    And the HTTP response status code should be 200
+    And sending the exact payload a second time should return HTTP 200 without creating a duplicate record
+
+  Examples: Telemetry Deduplication and UTC Normalization Matrix
+    | idempotency_key    | local_time          | offset | expected_utc         |
+    | DEV-901_SUBJ-10201 | 2026-09-22T10:30:00 | -04:00 | 2026-09-22T14:30:00Z |
+    | DEV-901_SUBJ-10201 | 2026-09-22T10:30:00 | -04:00 | 2026-09-22T14:30:00Z |
